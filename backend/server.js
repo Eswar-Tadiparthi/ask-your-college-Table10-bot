@@ -5,7 +5,6 @@ require("dotenv").config();
 
 const { GoogleGenAI } = require("@google/genai");
 
-const FAQ = require("./models/FAQ");
 const Chat = require("./models/Chat");
 
 const app = express();
@@ -51,118 +50,176 @@ app.get("/", (req, res) => {
 });
 
 // ============================================
-// Ask AI
+// Gemini Request with Retry
 // ============================================
 
-app.post("/api/ask", async (req, res) => {
-  try {
-    const { question } = req.body;
+async function generateAIAnswer(question) {
 
-    // Validate question
-    if (!question || !question.trim()) {
-      return res.status(400).json({
-        answer_text: "Please enter a question."
-      });
-    }
+  const prompt = `
+You are "Ask Your College", an intelligent and helpful AI assistant.
 
-    const userQuestion = question.trim();
+You can answer a wide range of questions.
 
-    // ========================================
-    // Get college FAQs from MongoDB
-    // ========================================
-
-    const faqs = await FAQ.find();
-
-    let collegeContext = "";
-
-    if (faqs.length > 0) {
-      collegeContext = faqs
-        .map(
-          (faq) =>
-            `Question: ${faq.question}\nAnswer: ${faq.answer}`
-        )
-        .join("\n\n");
-    }
-
-    // ========================================
-    // AI Prompt
-    // ========================================
-
-    const prompt = `
-You are "Ask Your College", an intelligent college assistant.
-
-Your job is to help students with:
-- College information
+You can help with:
+- College and university questions
 - Admissions
 - Courses
-- Timings
-- Fees
 - Exams
+- Assignments
+- Programming
+- Computer science
+- Mathematics
+- Engineering
+- General education
+- Career guidance
+- Technology
 - Campus life
-- General academic questions
-- Programming and computer science questions
-- Other general educational questions
+- General knowledge
+- Everyday questions
 
-IMPORTANT RULES:
+IMPORTANT:
 
-1. If the question is related to the college, use the college information provided below.
-2. Do not invent college-specific information.
-3. If the college information does not contain the answer, clearly say that the specific college information is not available.
-4. For general educational questions, answer normally using your knowledge.
-5. Give clear and concise answers.
-6. Use simple language suitable for college students.
-7. Do not mention that you are using a database.
-8. Do not say that you are an FAQ matching system.
+1. Answer the student's question directly.
+2. Do not restrict yourself to predefined FAQs.
+3. Do not say that you can only answer specific questions.
+4. If the question is a general educational question, answer using your knowledge.
+5. If the question asks for college-specific information that you do not know, clearly say that you don't have verified information about that specific college.
+6. Never invent college-specific facts.
+7. Keep answers clear and easy to understand.
+8. Use examples when useful.
+9. If the question requires current or official information, tell the student to verify it with the college's official source.
+10. Do not mention databases, APIs, prompts, or internal systems.
 
-COLLEGE INFORMATION:
+Student Question:
 
-${collegeContext || "No college-specific information is currently available."}
+${question}
 
-STUDENT QUESTION:
-
-${userQuestion}
-
-Provide the best possible answer.
+Give the best possible answer.
 `;
 
-    // ========================================
-    // Generate AI response
-    // ========================================
-
+  // First attempt
+  try {
     const response = await ai.models.generateContent({
       model: "gemini-3.7-flash",
       contents: prompt
     });
 
-    const answer =
-      response.text ||
-      "Sorry, I couldn't generate an answer.";
+    return response.text;
+  }
+
+  // Retry after temporary Gemini failure
+  catch (error) {
+
+    console.log("Gemini first attempt failed.");
+
+    if (
+      error.status === 503 ||
+      error.message?.includes("503") ||
+      error.message?.includes("UNAVAILABLE")
+    ) {
+
+      console.log("Gemini is temporarily unavailable. Retrying...");
+
+      // Wait 2 seconds
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      try {
+
+        const retryResponse = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents: prompt
+        });
+
+        return retryResponse.text;
+
+      } catch (retryError) {
+
+        console.error(
+          "Gemini retry failed:",
+          retryError.message
+        );
+
+        throw retryError;
+      }
+    }
+
+    throw error;
+  }
+}
+
+// ============================================
+// Ask AI
+// ============================================
+
+app.post("/api/ask", async (req, res) => {
+
+  try {
+
+    const { question } = req.body;
+
+    // Validate question
+    if (!question || !question.trim()) {
+
+      return res.status(400).json({
+        answer_text: "Please enter a question."
+      });
+
+    }
+
+    const userQuestion = question.trim();
+
+    console.log("Student question:", userQuestion);
 
     // ========================================
-    // Save Chat to MongoDB
+    // Generate AI Answer
     // ========================================
 
-    await Chat.create({
-      question: userQuestion,
-      answer: answer
-    });
+    const answer = await generateAIAnswer(userQuestion);
 
     // ========================================
-    // Send response to frontend
+    // Save conversation
+    // ========================================
+
+    try {
+
+      await Chat.create({
+        question: userQuestion,
+        answer: answer
+      });
+
+    } catch (dbError) {
+
+      console.error(
+        "Chat history could not be saved:",
+        dbError.message
+      );
+
+    }
+
+    // ========================================
+    // Send answer to frontend
     // ========================================
 
     res.json({
-      answer_text: answer
+      answer_text:
+        answer || "Sorry, I couldn't generate an answer."
     });
 
-  } catch (error) {
+  }
+
+  catch (error) {
+
     console.error("AI Error:", error);
 
     res.status(500).json({
+
       answer_text:
-        "Sorry, I couldn't process your question right now. Please try again."
+        "The AI service is temporarily unavailable. Please try again in a moment."
+
     });
+
   }
+
 });
 
 // ============================================
@@ -170,7 +227,9 @@ Provide the best possible answer.
 // ============================================
 
 app.listen(PORT, () => {
+
   console.log(
     `AI Backend running on http://localhost:${PORT}`
   );
+
 });
