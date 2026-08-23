@@ -1,18 +1,19 @@
-// ============================================================
-// College FAQ Chatbot
-// Replace API_URL below with your actual endpoint.
-// ============================================================
-const API_URL = "PASTE_YOUR_API_URL_HERE/ask";
+import React, { useState, useRef, useEffect } from "react";
 
-const { useState, useRef, useEffect } = React;
+// Backend API
+const API_URL = "http://localhost:5000/api/ask";
 
 function Message({ role, text }) {
   const isBot = role === "bot";
+
   return (
     <div className={`message-row ${isBot ? "bot-row" : "user-row"}`}>
       {isBot && (
-        <div className="avatar" aria-hidden="true">🎓</div>
+        <div className="avatar" aria-hidden="true">
+          🎓
+        </div>
       )}
+
       <div className={`bubble ${isBot ? "bot-bubble" : "user-bubble"}`}>
         {text}
       </div>
@@ -23,11 +24,14 @@ function Message({ role, text }) {
 function TypingIndicator() {
   return (
     <div className="message-row bot-row">
-      <div className="avatar" aria-hidden="true">🎓</div>
+      <div className="avatar" aria-hidden="true">
+        🎓
+      </div>
+
       <div className="bubble bot-bubble thinking">
-        <span className="dot" />
-        <span className="dot" />
-        <span className="dot" />
+        <span className="dot"></span>
+        <span className="dot"></span>
+        <span className="dot"></span>
       </div>
     </div>
   );
@@ -35,99 +39,173 @@ function TypingIndicator() {
 
 function App() {
   const [messages, setMessages] = useState([
-    { id: 0, role: "bot", text: "Hi! I'm your college assistant. Ask me anything about admissions, courses, deadlines, or campus life." }
+    {
+      id: 0,
+      role: "bot",
+      text: "Hi! I'm your college assistant. Ask me anything about admissions, courses, deadlines, or campus life."
+    }
   ]);
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
   const bottomRef = useRef(null);
 
-  // Auto-scroll to latest message
+  // Scroll to latest message
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth"
+    });
   }, [messages, loading]);
 
   async function sendMessage() {
     const question = input.trim();
-    if (!question || loading) return;
 
-    // Add user bubble
-    setMessages(prev => [...prev, { id: Date.now(), role: "user", text: question }]);
+    if (!question || loading) {
+      return;
+    }
+
+    // Add user's message
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        role: "user",
+        text: question
+      }
+    ]);
+
+    // Clear input
     setInput("");
+
+    // Show typing indicator
     setLoading(true);
 
     try {
-      const res = await fetch(API_URL, {
+      console.log("Sending question:", question);
+
+      const response = await fetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question })
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          question: question
+        })
       });
 
-      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      console.log("Backend status:", response.status);
 
-      const data = await res.json();
-      const answer = data.answer_text ?? "Sorry, I didn't get a response. Please try again.";
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
 
-      setMessages(prev => [...prev, { id: Date.now() + 1, role: "bot", text: answer }]);
-    } catch (err) {
-      setMessages(prev => [
+      const data = await response.json();
+
+      console.log("Backend response:", data);
+
+      const answer =
+        data.answer_text ||
+        "Sorry, I couldn't find an answer to that question.";
+
+      // Add bot response
+      setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, role: "bot", text: "Something went wrong. Please check your connection and try again." }
+        {
+          id: Date.now() + 1,
+          role: "bot",
+          text: answer
+        }
+      ]);
+    } catch (error) {
+      console.error("API Error:", error);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "bot",
+          text:
+            "Something went wrong. Please make sure the backend is running on http://localhost:5000."
+        }
       ]);
     } finally {
       setLoading(false);
     }
   }
 
-  function handleKeyDown(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+  function handleKeyDown(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       sendMessage();
     }
   }
 
   return (
     <div className="app">
+
       {/* Header */}
       <header className="header">
-        <span className="header-icon">🎓</span>
+        <div className="header-icon">
+          🎓
+        </div>
+
         <div>
-          <h1 className="header-title">Ask Your College</h1>
-          <p className="header-sub">Instant answers to your campus questions</p>
+          <h1 className="header-title">
+            Ask Your College
+          </h1>
+
+          <p className="header-sub">
+            Instant answers to your campus questions
+          </p>
         </div>
       </header>
 
-      {/* Chat window */}
-      <main className="chat-window" role="log" aria-live="polite" aria-label="Chat messages">
-        {messages.map(msg => (
-          <Message key={msg.id} role={msg.role} text={msg.text} />
+      {/* Chat Window */}
+      <main
+        className="chat-window"
+        role="log"
+        aria-live="polite"
+        aria-label="Chat messages"
+      >
+        {messages.map((message) => (
+          <Message
+            key={message.id}
+            role={message.role}
+            text={message.text}
+          />
         ))}
+
         {loading && <TypingIndicator />}
-        <div ref={bottomRef} />
+
+        <div ref={bottomRef}></div>
       </main>
 
-      {/* Input bar */}
+      {/* Input Area */}
       <footer className="input-bar">
         <input
           className="input-field"
           type="text"
           placeholder="Ask a question..."
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={(event) => setInput(event.target.value)}
           onKeyDown={handleKeyDown}
           disabled={loading}
           aria-label="Your question"
         />
+
         <button
           className="send-btn"
           onClick={sendMessage}
           disabled={loading || !input.trim()}
           aria-label="Send message"
         >
-          Send
+          {loading ? "..." : "Send"}
         </button>
       </footer>
+
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+export default App;
