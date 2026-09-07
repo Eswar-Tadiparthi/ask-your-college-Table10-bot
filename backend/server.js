@@ -12,10 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
+
 
 // ============================================
 // Middleware
