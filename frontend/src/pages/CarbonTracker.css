@@ -1,0 +1,624 @@
+/* =========================================================
+   CARBON PAGE
+   ========================================================= */
+
+.carbon-page {
+  width: 100%;
+}
+
+
+/* =========================================================
+   PAGE TITLE
+   ========================================================= */
+
+.carbon-page-header {
+  margin-bottom: 28px;
+}
+
+.carbon-page-header h1 {
+  margin: 0;
+
+  color: #172b4d;
+
+  font-size: 42px;
+  line-height: 1.15;
+
+  font-weight: 800;
+
+  letter-spacing: -1px;
+}
+
+.carbon-page-header p {
+  margin: 8px 0 0;
+
+  color: #6d88aa;
+
+  font-size: 21px;
+}
+
+.carbon-page-header strong {
+  color: #24813a;
+}
+
+
+/* =========================================================
+   TWO COLUMN LAYOUT
+   ========================================================= */
+
+.tracker-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    390px;
+
+  gap: 24px;
+
+  align-items: start;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.tracker-card,
+.history-card {
+  background: #ffffff;
+
+  border: 1px solid #dce6ed;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 3px 12px rgba(30, 55, 80, 0.04);
+}
+
+
+/* =========================================================
+   LEFT CARD
+   ========================================================= */
+
+.tracker-card {
+  padding: 28px 30px 32px;
+}
+
+
+/* =========================================================
+   RIGHT CARD
+   ========================================================= */
+
+.history-card {
+  padding: 28px 22px 24px;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.card-header h2 {
+  margin: 0;
+
+  color: #172b4d;
+
+  font-size: 25px;
+
+  font-weight: 800;
+}
+
+.card-header p {
+  margin: 7px 0 0;
+
+  color: #7188a7;
+
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   CATEGORY TABS
+   ========================================================= */
+
+.category-tabs {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 9px;
+
+  margin-top: 22px;
+  margin-bottom: 28px;
+}
+
+.category-tab {
+  height: 48px;
+
+  border-radius: 12px;
+
+  border: 1px solid #d7e2ec;
+
+  background: #f7f9fb;
+
+  color: #385779;
+
+  font-size: 14px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border 0.2s ease;
+}
+
+.category-tab:hover {
+  background: #edf6ee;
+}
+
+.category-tab.active {
+  background: #29953f;
+
+  color: #ffffff;
+
+  border-color: #29953f;
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.activity-grid {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  column-gap: 24px;
+  row-gap: 22px;
+}
+
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.field-group {
+  min-width: 0;
+}
+
+.field-group label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #182e50;
+
+  font-size: 14px;
+
+  font-weight: 750;
+}
+
+.field-group input,
+.field-group select {
+  width: 100%;
+
+  height: 48px;
+
+  padding: 0 15px;
+
+  border-radius: 11px;
+
+  border: 1px solid #d4e0ea;
+
+  background: #ffffff;
+
+  color: #29496d;
+
+  font-size: 15px;
+
+  outline: none;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+  border-color: #2b963e;
+
+  box-shadow:
+    0 0 0 3px rgba(43, 150, 62, 0.08);
+}
+
+
+/* =========================================================
+   EMISSION BOX
+   ========================================================= */
+
+.emission-box {
+  margin-top: 25px;
+
+  min-height: 94px;
+
+  padding: 21px 24px;
+
+  border-radius: 16px;
+
+  background: #e6f5df;
+
+  border: 1px solid #c7e7bb;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+}
+
+.emission-title {
+  color: #237e37;
+
+  font-size: 14px;
+
+  font-weight: 750;
+
+  margin-bottom: 5px;
+}
+
+.emission-value {
+  color: #2a913e;
+
+  font-size: 30px;
+
+  line-height: 1;
+
+  font-weight: 850;
+}
+
+.emission-value span {
+  font-size: 17px;
+
+  font-weight: 700;
+}
+
+.emission-formula {
+  color: #6d88aa;
+
+  font-size: 14px;
+
+  text-align: right;
+}
+
+
+/* =========================================================
+   LOG BUTTON
+   ========================================================= */
+
+.log-button {
+  width: 100%;
+
+  height: 48px;
+
+  margin-top: 19px;
+
+  border: 0;
+
+  border-radius: 11px;
+
+  background: #29953f;
+
+  color: #ffffff;
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.log-button:hover {
+  background: #238638;
+}
+
+.log-button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   BREAKDOWN
+   ========================================================= */
+
+.breakdown {
+  margin-top: 28px;
+}
+
+.breakdown h2 {
+  margin: 0 0 18px;
+
+  color: #172b4d;
+
+  font-size: 19px;
+
+  font-weight: 800;
+}
+
+.breakdown-row {
+  margin-bottom: 14px;
+}
+
+.breakdown-label {
+  display: flex;
+
+  justify-content: space-between;
+
+  margin-bottom: 6px;
+
+  color: #243d5e;
+
+  font-size: 14px;
+
+  font-weight: 650;
+}
+
+.progress-track {
+  width: 100%;
+
+  height: 8px;
+
+  background: #dfe7ed;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+
+  background: #2d963f;
+
+  border-radius: 20px;
+}
+
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+.history-list {
+  margin-top: 22px;
+}
+
+.history-item {
+  min-height: 66px;
+
+  padding: 10px 12px;
+
+  margin-bottom: 10px;
+
+  border-radius: 14px;
+
+  background: #e8f5e4;
+
+  border: 1px solid #d0e8c9;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+}
+
+.history-icon {
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 42px;
+
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+}
+
+.history-icon.transport {
+  background: #27963d;
+}
+
+.history-icon.energy {
+  background: #29953f;
+}
+
+.history-icon.water {
+  background: #2f7fc5;
+}
+
+.history-icon.food {
+  background: #f28c22;
+}
+
+.history-icon.waste {
+  background: #72839c;
+}
+
+.history-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.history-title {
+  color: #172e50;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+.history-details {
+  color: #7890ab;
+
+  font-size: 12px;
+
+  margin-top: 3px;
+}
+
+.history-emission {
+  color: #e52d2d;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   MONTHLY SUMMARY
+   ========================================================= */
+
+.monthly-summary {
+  margin-top: 24px;
+
+  padding: 20px;
+
+  border-radius: 15px;
+
+  border: 1px solid #dce6ed;
+
+  background: #ffffff;
+}
+
+.monthly-summary h3 {
+  margin: 0 0 18px;
+
+  color: #172b4d;
+
+  font-size: 17px;
+
+  font-weight: 800;
+}
+
+.summary-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 13px;
+
+  color: #7388a6;
+
+  font-size: 13px;
+}
+
+.summary-row strong {
+  color: #172b4d;
+
+  white-space: nowrap;
+}
+
+.summary-row .green-text {
+  color: #26933c;
+}
+
+.summary-progress {
+  height: 7px;
+
+  background: #dfe7ed;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  margin-top: 18px;
+}
+
+.summary-progress-fill {
+  width: 0%;
+
+  height: 100%;
+
+  background: #29953f;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+  .tracker-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .history-card {
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 850px) {
+
+  .category-tabs {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .activity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 550px) {
+
+  .category-tabs {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .tracker-card {
+    padding: 20px;
+  }
+
+  .carbon-page-header h1 {
+    font-size: 30px;
+  }
+
+  .carbon-page-header p {
+    font-size: 16px;
+  }
+
+  .emission-box {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .emission-formula {
+    text-align: left;
+  }
+}
